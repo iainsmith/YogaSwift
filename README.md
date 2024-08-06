@@ -29,7 +29,15 @@ let left = child0.layoutMargin(for: .left)
 let height = child0.layoutHeight;
 ```
 
-## Swift 6 only for now
+## Swift main branch required
+
+- This is an experimental branch looking at HypoArray
+- Download a trunk swift toolchain from August 2024 or later https://www.swift.org/download/
+- run `export TOOLCHAINS=$(plutil -extract CFBundleIdentifier raw \
+ /Library/Developer/Toolchains/swift-latest.xctoolchain/Info.plist)`
+- run `swift test`
+
+
 
 ### Noncopyable Types
 

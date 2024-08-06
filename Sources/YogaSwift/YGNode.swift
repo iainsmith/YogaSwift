@@ -3,9 +3,7 @@ import yoga
 /// A ``YogaNode`` that owns the ``YogaNode/node`` and will free it on deinit.
 public struct YGNode: YogaNode, ~Copyable {
   public let __node: YGNodeRef
-
-  // Directly crated children that need to be released.
-  private var ownedChildren: [YGNodeRef] = []
+  public var children: Hypoarray<YGNode> = .init()
 
   public init(configuration: borrowing YogaConfiguration) {
     self.__node = YGNodeNewWithConfig(configuration.config)
@@ -19,29 +17,23 @@ public struct YGNode: YogaNode, ~Copyable {
     self.__node = node
   }
 
-  /// Add a child at the last index that will be owned by this ``Node``
-  mutating public func add(_ closure: (inout YGNodeView) -> Void) {
-    guard let child = YGNodeNew() else { return }
-    ownedChildren.append(child)
+  mutating public func add(_ element: consuming YGNode) {
     let count = YGNodeGetChildCount(__node)
-    var ref = YGNodeView(from: child)
-    closure(&ref)
-    YGNodeInsertChild(__node, child, count)
+    YGNodeInsertChild(__node, element.__node, count)
+    children.append(element)
+  }
+
+  /// Add a child at the last index that will be owned by this ``Node``
+  mutating public func add(_ closure: (inout YGNode) -> Void) {
+    var child = YGNode()
+    let count = YGNodeGetChildCount(__node)
+    closure(&child)
+    YGNodeInsertChild(__node, child.__node, count)
+    children.append(child)
   }
 
   deinit {
-    for child in ownedChildren {
-      YGNodeFree(child)
-    }
     YGNodeFree(__node)
-  }
-
-  public func children(_ closure: (inout YGNodeView) -> Void) {
-    YGNodeView(from: __node).children(closure)
-  }
-
-  public func walk(_ closure: (inout YGNodeView) -> Void) {
-    YGNodeView(from: __node).walk(closure)
   }
 
   public func layout(

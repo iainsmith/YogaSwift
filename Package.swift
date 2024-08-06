@@ -11,13 +11,16 @@ let package = Package(
     .library(
       name: "YogaSwift",
       targets: ["YogaSwift"]
-    )
+    ),
+    .executable(name: "CLI", targets: ["CLI"]),
   ],
   dependencies: [
+    .package(url: "https://github.com/swiftlang/swift-testing", exact: "0.11.0"),
     .package(url: "https://github.com/facebook/yoga.git", .upToNextMajor(from: "3.0.0")),
     .package(url: "https://github.com/apple/swift-syntax", exact: "600.0.0-prerelease-2024-07-24"),
   ],
   targets: [
+    .executableTarget(name: "CLI", dependencies: ["YogaSwift"]),
     .target(
       name: "YogaSwift",
       dependencies: [
@@ -37,10 +40,9 @@ let package = Package(
         .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
       ]
     ),
-
     .testTarget(
       name: "YogaSwiftTests",
-      dependencies: ["YogaSwift"]
+      dependencies: ["YogaSwift", .product(name: "Testing", package: "swift-testing")]
     ),
   ]
 )

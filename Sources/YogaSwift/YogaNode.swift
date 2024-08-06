@@ -10,14 +10,30 @@ public protocol YogaNode: ~Copyable {
 
   /// Users should avoid accessing this property directly
   var __node: YGNodeRef { get }
+
+  var children: Hypoarray<Self> { get set }
+  //  var children: Hypoarray<any YogaNode & ~Copyable> { get set }
 }
 
 extension YogaNode where Self: ~Copyable {
-  public func parent(_ closure: (inout YGNodeView) -> Void) {
-    if let parent = YGNodeGetParent(__node) {
-      var node: YGNodeView = YGNodeView(from: parent)
+  //  public func parent(_ closure: (inout YGNode) -> Void) {
+  //    if let parent = YGNodeGetParent(__node) {
+  //      var node: YGNodeView = YGNodeView(from: parent)
+  //      closure(&node)
+  //    }
+  //  }
+
+  public mutating func children(_ closure: (inout Self) -> Void) {
+    children.forEach(closure)
+  }
+
+  public mutating func walk(_ closure: (inout Self) -> Void) {
+    var a: Self = self
+    closure(&a)
+    a.children { node in
       closure(&node)
     }
+    self = a
   }
 
   public var context: UnsafeMutableRawPointer! {
@@ -30,10 +46,10 @@ extension YogaNode where Self: ~Copyable {
     set { YGNodeSetConfig(__node, newValue.config) }
   }
 
-  public func add<N: YogaNode & ~Copyable>(_ child: borrowing N) {
-    let count = YGNodeGetChildCount(__node)
-    YGNodeInsertChild(__node, child.__node, count)
-  }
+  //  public func add<N: YogaNode & ~Copyable>(_ child: borrowing N) {
+  //    let count = YGNodeGetChildCount(__node)
+  //    YGNodeInsertChild(__node, child.__node, count)
+  //  }
 
   public func remove(_ child: borrowing YGNode) {
     YGNodeRemoveChild(__node, child.__node)
@@ -190,7 +206,7 @@ extension YogaNode where Self: ~Copyable {
   public func layoutBorder(for edge: YGEdge) -> Float { YGNodeLayoutGetBorder(__node, edge) }
   public func layoutPadding(for edge: YGEdge) -> Float { YGNodeLayoutGetPadding(__node, edge) }
 
-  static func copyStyle(from: borrowing YogaNode, to: borrowing YogaNode) {
+  static func copyStyle(from: borrowing some YogaNode, to: borrowing some YogaNode) {
     YGNodeCopyStyle(to.__node, from.__node)
   }
 }
