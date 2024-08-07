@@ -31,7 +31,7 @@ extension YogaNode where Self: ~Copyable {
     var a: Self = self
     closure(&a)
     a.children { node in
-      closure(&node)
+      node.walk(closure)
     }
     self = a
   }
