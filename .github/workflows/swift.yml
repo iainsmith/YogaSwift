@@ -1,0 +1,25 @@
+# GitHub recommends pinning actions to a commit SHA.
+# To get a newer version, you will need to update the SHA.
+# You can also reference a tag or branch, but the action may change without warning.
+
+name: Swift
+
+on: [push]
+
+jobs:
+  build:
+    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        swift: ["5.10.1"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: swift-actions/setup-swift@3aed395c5397f62deb91d8fe7af1418a9ae4d16f
+        with:
+          swift-version: ${{ matrix.swift }}
+      - uses: actions/checkout@v4
+      - name: Build
+        run: swift build
+      - name: Run tests
+        run: swift test
