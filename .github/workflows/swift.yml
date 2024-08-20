@@ -10,7 +10,7 @@ jobs:
   test-on-macos:
     strategy:
       matrix:
-        xcode-version: ['16_beta_5']
+        xcode-version: ['16_beta_5'] # https://github.com/actions/runner-images/blob/main/images/macos/macos-14-Readme.md
     runs-on: macos-latest
     timeout-minutes: 3
     env:
