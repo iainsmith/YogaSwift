@@ -1,25 +1,41 @@
-# GitHub recommends pinning actions to a commit SHA.
-# To get a newer version, you will need to update the SHA.
-# You can also reference a tag or branch, but the action may change without warning.
+name: CI
 
-name: Swift
-
-on: [push]
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-  build:
-    name: Swift ${{ matrix.swift }} on ${{ matrix.os }}
+  test-on-macos:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        swift: ["5.10.1"]
-    runs-on: ${{ matrix.os }}
+        xcode-version: ['16.0']
+    runs-on: macos-latest
+    timeout-minutes: 3
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_${{ matrix.xcode-version }}.app
     steps:
-      - uses: swift-actions/setup-swift@3aed395c5397f62deb91d8fe7af1418a9ae4d16f
-        with:
-          swift-version: ${{ matrix.swift }}
       - uses: actions/checkout@v4
-      - name: Build
+      - name: Run swift build
         run: swift build
-      - name: Run tests
+      - name: Run swift test
+        run: swift test
+  test-on-linux:
+    strategy:
+      matrix:
+        swift-version: ['6.0-snapshot']
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Swift ${{ matrix.swift-version }}
+        run: |
+          curl -L https://swiftlang.github.io/swiftly/swiftly-install.sh | bash -s -- -y
+          swiftly install ${{ matrix.swift-version }}
+      - name: Run swift --version
+        run: swift --version
+      - name: Run swift build
+        run: swift build
+      - name: Run swift test
         run: swift test
