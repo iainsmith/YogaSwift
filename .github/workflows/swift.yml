@@ -10,7 +10,7 @@ jobs:
   test-on-macos:
     strategy:
       matrix:
-        xcode-version: ['16.0']
+        xcode-version: ['16_beta_5']
     runs-on: macos-latest
     timeout-minutes: 3
     env:
