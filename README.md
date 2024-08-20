@@ -49,4 +49,4 @@ Experimental. API design may change in 0.0.X releases.
 - Review margin/padding/children API
 - TextNode support
 - Remove macro duplication
-- Setup CI
+- Setup linux CI
