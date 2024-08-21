@@ -3,9 +3,9 @@ import yoga.core
 
 /// Conforming types:
 ///   - have accessors generated for the underlying YGNodeRef
-///   - that allocate the YGNodeRef are responsible for callign YGNodeFree on the node in deinit
+///   - that allocate the YGNodeRef are responsible for calling YGNodeFree on the node in deinit
 ///
-///  Users should not call YGNodeFree on ``Node`` or ``NodeView``
+///  You should not call YGNodeFree(__node) on ``YGNode`` or ``NodeView``
 public protocol YogaNode: ~Copyable {
 
   /// Users should avoid accessing this property directly
